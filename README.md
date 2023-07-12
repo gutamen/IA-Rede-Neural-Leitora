@@ -1,6 +1,8 @@
 # IA-Rede-Neural-Leitora
 -> Matlab
 
+si plãs plãs = C++
+
 https://medium.com/@jvsavietto6/classificando-texto-com-redes-neurais-artificiais-150ef448b13d
 
 Classificação de Documentos e Textos: Redes neurais podem ser usadas para classificar documentos e textos em categorias específicas, como categorização de notícias, triagem de currículos ou análise de sentimentos em análises de produtos.
