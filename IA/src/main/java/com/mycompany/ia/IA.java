@@ -4,6 +4,8 @@
 
 package com.mycompany.ia;
 
+import org.tensorflow.Graph;
+import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 import org.tensorflow.TensorFlow;
 
@@ -33,8 +35,11 @@ public class IA {
         };
 
         // Create the model
-        TensorFlow tf = TensorFlow.instance();
-        tf.createSession();
+        TensorFlow tf =  new TensorFlow();
+        
+        
+        Graph graph = new Graph();
+        createSession(graph);
         
         // Create the input tensor
         Tensor inputTensor = tf.constant(documents);
@@ -57,6 +62,13 @@ public class IA {
         int category = tf.predict(newDocument)[0];
         System.out.println("Category: " + category);
     }
+    
+    public static Session createSession(Graph graph) {
+        Session session = new Session(graph);
+        return session;
+    }
+    
+   
 }
 
 
