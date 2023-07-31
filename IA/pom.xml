@@ -14,8 +14,13 @@
     <dependencies>
         <dependency>
             <groupId>org.tensorflow</groupId>
-            <artifactId>tensorflow-framework</artifactId>
-            <version>0.5.0</version>
+            <artifactId>tensorflow</artifactId>
+            <version>1.15.0</version> <!-- Verifique a versão mais recente disponível -->
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>4.2.2</version> <!-- Verifique a versão mais recente disponível -->
         </dependency>
     </dependencies>
 </project>
