@@ -4,43 +4,58 @@
 
 package com.mycompany.ia;
 
-import org.tensorflow.SavedModelBundle;
-import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 import org.tensorflow.TensorFlow;
-
 
 
 /**
  *
  * @author 
  */
-import org.tensorflow.ConcreteFunction;
-import org.tensorflow.Signature;
-import org.tensorflow.Tensor;
-import org.tensorflow.TensorFlow;
-import org.tensorflow.op.Ops;
-import org.tensorflow.op.core.Placeholder;
-import org.tensorflow.op.math.Add;
-import org.tensorflow.types.TInt32;
+
 
 public class IA {
 
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("Hello TensorFlow " + TensorFlow.version());
+     private static final int CATEGORIES = 5;
+    private static final int EPOCHS = 10;
+    private static final int BATCH_SIZE = 32;
 
-        try (ConcreteFunction dbl = ConcreteFunction.create(IA::dbl);
-            TInt32 x = TInt32.scalarOf(10);
-            Tensor dblX = dbl.call(x)) {
-          System.out.println(x.getInt() + " doubled is " + ((TInt32)dblX).getInt());
-        }
-    }
+    public static void main(String[] args) {
 
-    private static Signature dbl(Ops tf) {
-        Placeholder<TInt32> x = tf.placeholder(TInt32.class);
-        Add<TInt32> dblX = tf.math.add(x, x);
-        return Signature.builder().input("x", x).output("dbl", dblX).build();
+        // Load the data
+        String[] documents = {
+            "O tempo está quente hoje",
+            "A nova música do Justin Bieber é ótima",
+            "O presidente foi eleito",
+            "A economia está em recessão",
+            "A nova tecnologia é revolucionária"
+        };
+
+        // Create the model
+        TensorFlow tf = TensorFlow.instance();
+        tf.createSession();
+        
+        // Create the input tensor
+        Tensor inputTensor = tf.constant(documents);
+
+        // Create the output tensor
+        Tensor outputTensor = tf.matmul(inputTensor, tf.constant(new int[]{128, CATEGORIES}));
+
+        // Compile the model
+        tf.compile(outputTensor, "softmax");
+
+        // Train the model
+        tf.fit(inputTensor, outputTensor, EPOCHS, BATCH_SIZE);
+
+        // Evaluate the model
+        int accuracy = tf.evaluate(inputTensor, outputTensor)[1];
+        System.out.println("Accuracy: " + accuracy);
+
+        // Classify a new document
+        String newDocument = "O novo álbum do Taylor Swift é incrível";
+        int category = tf.predict(newDocument)[0];
+        System.out.println("Category: " + category);
     }
 }
 
