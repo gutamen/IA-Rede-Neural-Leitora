@@ -4,6 +4,7 @@
 
 package com.mycompany.ia;
 
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import java.io.IOException;
@@ -52,12 +53,15 @@ private static final List<String> categories = List.of("wheather", "music", "pol
                          .get(0)) {
 
                 // Obtenha o resultado da classificação
-                float[] predictions = outputTensor.copyTo(new float[1][numCategories])[0];
-//                int predictedCategoryIndex = argmax(predictions);
-//                String predictedCategory = getCategoryName(predictedCategoryIndex);
+//                Float[][] predictions = outputTensor.copyTo(new Float[1][numCategories])[0];
+                
+                float[] predictions = new float[numCategories];
+                outputTensor.copyTo(predictions);
+                int predictedCategoryIndex = argmax(predictions);
+                String predictedCategory = getCategoryName(predictedCategoryIndex);
 
-                // Imprima a categoria prevista
-//                System.out.println("Categoria prevista: " + predictedCategory);
+                //Imprima a categoria prevista
+                System.out.println("Categoria prevista: " + predictedCategory);
             }
         }    
     }
@@ -92,11 +96,22 @@ private static final List<String> categories = List.of("wheather", "music", "pol
 
         return inputTensorData;
     }
+
+    private static int argmax(float[] array) {
+      int maxIndex = 0;
+        float maxValue = array[0];
+
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > maxValue) {
+                maxIndex = i;
+                maxValue = array[i];
+            }
+        }
+
+        return maxIndex;
+    }
 //
-//    private static int argmax(float[] array) {
-//        // Encontre o índice do maior valor no array
-//    }
-//
+    
     private static String getCategoryName(int categoryIndex) {
         // Mapeie o índice da categoria para o nome da categoria (clima, música, política, economia, tecnologia)
         String returnS = null;
