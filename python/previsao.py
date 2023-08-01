@@ -1,3 +1,4 @@
+# Gustavo Antonio Martini, Gustavo Macedo, Vinicius Gilnek Drage
 import pickle
 import tensorflow as tf
 from keras.models import Sequential
@@ -10,13 +11,17 @@ import pandas as pd
 import numpy as np
 from keras.preprocessing.text import Tokenizer
 from sklearn.metrics import confusion_matrix
-
+import sys
 # --------------------------------------------------------------------------------------------------------
 # PRÉ-PROCESSAMENTO
 
+
+# abre o CSV com os dados
 dataset = pd.read_csv('noticias.csv')
 titulos, y = dataset.iloc[:,0], dataset.iloc[:,1]
 
+
+# Cria os labels para cada tipo de notícia
 labelencoder = LabelEncoder()
 y = labelencoder.fit_transform(y)
 
@@ -37,6 +42,8 @@ for title in titulos:
 
 vocabulario = ['']
 #print(filtro)
+
+# Remove palavras repitidas
 for strings in filtro:
     vocabulario += strings.split()
 
@@ -52,6 +59,8 @@ tokenizer = Tokenizer()
 tokenizer.fit_on_texts(vocabulario)
 vocab = len(tokenizer.word_docs) + 1
 
+
+# Carrega o vocabulário do treino, uma vez que é aleatório
 with open('tokenizer_mapping.pickle', 'rb') as handle:
     tokenizerIndex = pickle.load(handle)
 
@@ -65,17 +74,19 @@ titulos = tokenizer.texts_to_sequences(filtro)
 max_length = max([len(z) for z in titulos])
 titulos = pad_sequences(titulos, maxlen=max_length, padding='post')
 
-
+# Inicia a rede neural
 model = Sequential()
 model.add(Embedding(input_dim=vocab, output_dim=80, input_length=max_length, trainable = True))
 model.add(GlobalMaxPooling1D())
 model.add(Dropout(0.3))
-model.add(Dense(units = 7, activation = 'softmax'))
+model.add(Dense(units = 6, activation = 'softmax'))
 model.compile(optimizer = 'adam', loss = 'sparse_categorical_crossentropy', metrics = ['accuracy'])
 
+# Carrega o modelo treinado
 model.load_weights('modelo.keras')
 
-teste = ["Não vou fazer política do “é dando que se recebe”, diz Lula"]
+# Pega a string da notícia
+teste = [sys.argv[1]]
 
 testeToken = tokenizer.texts_to_sequences(teste)
 testeToken = pad_sequences(testeToken, maxlen=max_length, padding='post')
@@ -84,6 +95,8 @@ print(testeToken)
 
 #print(titulos)
 
+
+# Faz a predição
 predicao = model.predict(testeToken)
 y_pred_label = np.argmax(predicao, axis=1)
 
